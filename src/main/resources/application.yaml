@@ -1,0 +1,43 @@
+server:
+  servlet:
+    encoding:
+      force: true
+
+spring:
+  profiles:
+    active: local # default
+    group:
+      local:
+        - common
+      prod:
+        - common
+
+
+---
+spring:
+  config:
+    activate:
+      on-profile: common
+
+---
+spring:
+  config:
+    activate:
+      on-profile: local
+  datasource:
+    driver-class-name: org.mariadb.jdbc.Driver
+    url: jdbc:mariadb://localhost:4000/pharmacy_recommendation
+    username: ${SPRING_DATASOURCE_USERNAME}
+    password: ${SPRING_DATASOURCE_PASSWORD}
+  jpa:
+    hibernate:
+      ddl-auto: create
+    show-sql: true
+---
+spring:
+  config:
+    activate:
+      on-profile: prod
+
+
+

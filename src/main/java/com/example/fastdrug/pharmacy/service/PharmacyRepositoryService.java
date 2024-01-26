@@ -16,7 +16,6 @@ import java.util.Objects;
 public class PharmacyRepositoryService {
     private final PharmacyRepository pharmacyRepository;
 
-    @Transactional
     public void updateAddress(Long id, String address) {
         Pharmacy entity = pharmacyRepository.findById(id).orElse(null);
 

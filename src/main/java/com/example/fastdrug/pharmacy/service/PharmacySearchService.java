@@ -1,5 +1,6 @@
 package com.example.fastdrug.pharmacy.service;
 
+import com.example.fastdrug.pharmacy.cache.PharmacyRedisTemplateService;
 import com.example.fastdrug.pharmacy.dto.PharmacyDto;
 import com.example.fastdrug.pharmacy.entity.Pharmacy;
 import lombok.RequiredArgsConstructor;
@@ -14,12 +15,14 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class PharmacySearchService {
     private final PharmacyRepositoryService pharmacyRepositoryService;
+    private final PharmacyRedisTemplateService pharmacyRedisTemplateService;
 
     public List<PharmacyDto> searchPharmacyDtoList() {
 
-        // redis
-
-        // db
+        // redis (redis에 문제가 없는 경우)
+        List<PharmacyDto> pharmacyDtoList = pharmacyRedisTemplateService.findAll();
+        if(!pharmacyDtoList.isEmpty()) return pharmacyDtoList;
+        // db (redis에 문제가 발생한 경우)
         return pharmacyRepositoryService.findAll().stream().map(
                 //entity -> convertToPharmacyDto(entity)
                 this::convertToPharmacyDto

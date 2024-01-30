@@ -2,14 +2,21 @@ package com.example.fastdrug.pharmacy.repository
 
 import com.example.fastdrug.AbstractIntegrationContainerBaseTest
 import com.example.fastdrug.pharmacy.entity.Pharmacy
-
+import com.example.fastdrug.pharmacy.service.PharmacyRepositoryService
+import org.spockframework.spring.SpringSpy
+import org.spockframework.spring.UnwrapAopProxy
 import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc
+import org.springframework.test.web.servlet.MockMvc
 
+@AutoConfigureMockMvc
 class PharmacyRepositoryTest extends AbstractIntegrationContainerBaseTest {
 
     @Autowired
-    private PharmacyRepository pharmacyRepository
+    PharmacyRepositoryService pharmacyRepositoryService
 
+    @Autowired
+    PharmacyRepository pharmacyRepository
     void setup() {
         pharmacyRepository.deleteAll()
     }
@@ -29,7 +36,7 @@ class PharmacyRepositoryTest extends AbstractIntegrationContainerBaseTest {
                 .longitude(longitude)
                 .build()
         when:
-        def entity = pharmacyRepository.save(pharmacy)
+        def entity = mockMvc.get(pharmacyRepository.save(pharmacy))
 
         then:
         entity.getPharmacyAddress() == address

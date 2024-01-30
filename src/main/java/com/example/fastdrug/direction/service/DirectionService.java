@@ -73,7 +73,7 @@ public class DirectionService {
                                 .build()
 
                 )
-                .filter(direction -> direction.getDistance() <= RADIUS_KM)
+                .filter(direction -> direction.getDistance() <= RADIUS_KM*1000)
                 .sorted(Comparator.comparing(Direction::getDistance))
                 .limit(MAX_SEARCH_COUNT)
                 .collect(Collectors.toList());

@@ -21,7 +21,11 @@ public class PharmacySearchService {
 
         // redis (redis에 문제가 없는 경우)
         List<PharmacyDto> pharmacyDtoList = pharmacyRedisTemplateService.findAll();
-        if(!pharmacyDtoList.isEmpty()) return pharmacyDtoList;
+        if(!pharmacyDtoList.isEmpty()) {
+            log.info("redis findAll success!!!!!!!!!");
+            return pharmacyDtoList;
+
+        }
         // db (redis에 문제가 발생한 경우)
         return pharmacyRepositoryService.findAll().stream().map(
                 //entity -> convertToPharmacyDto(entity)

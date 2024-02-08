@@ -1,0 +1,49 @@
+version: "3.8"
+services:
+
+  pharmacy-recommendation-redis:
+    container_name: pharmacy-recommendation-redis
+    build:
+      dockerfile: Dockerfile
+      context: ./redis
+    image: congsole/pharmacy-recommendation-redis
+    ports:
+      - "6379:6379"
+
+  pharmacy-recommendation-database:
+    container_name: pharmacy-recommendation-database
+    build:
+      dockerfile: Dockerfile
+      context: ./database
+    image: congsole/pharmacy-recommendation-database
+    environment:
+      - MARIADB_DATABASE=pharmacy-recommendation
+      - MARIADB_ROOT_PASSWORD=${SPRING_DATASOURCE_PASSWORD}
+    volumes:
+      - ./database/config:/etc/mysql/conf.d
+      - ./database/init:/docker-entrypoint-initdb.d
+    ports:
+      - "6000:3306"  # 접근 포트 설정 (컨테이너 외부 : 컨테이너 내부)
+    #컨테이너 외부에서 사용할 포트는 application.yaml 파일의 데이터소스 유알엘과 일치시킴
+    #컨테이너 외부에서 사용할 포트는 로컬의 마리아디비와 포트번호가 달라야함
+    #나는 마이에스큐엘 3306, 마리아디비 4000으로 설정했기 때문에 또다른 6000으로 해줌.
+
+  pharmacy-recommendation-app:
+    container_name: pharmacy-recommendation-app
+    build: . #Dockerfile이 있는 위치를 지정해준 것.
+    depends_on: #CONTAINER 실행 순서를 지정해준다. DB -> REDIS -> SPRINGBOOT
+      - pharmacy-recommendation-database
+      - pharmacy-recommendation-redis
+    image: congsole/pharmacy-recommendation-app
+    environment: #.env파일을 이용해서 환경변수 주입
+      - SPRING_DATASOURCE_USERNAME=${SPRING_DATASOURCE_USERNAME}
+      - SPRING_DATASOURCE_PASSWORD=${SPRING_DATASOURCE_PASSWORD}
+      - SPRING_PROFILES_ACTIVE=${SPRING_PROFILES_ACTIVE}
+      - KAKAO_REST_API_KEY=${KAKAO_REST_API_KEY}
+    ports:
+      - "80:8080" # 컨테이너 외부 : 컨테이너 내부 ... 포트 포워딩
+      # 브라우저의 기본 포트는 80... AWS ec2에서 발급받은 아이피 기본 포트도 80이 될 것이다.
+    restart: always
+    # depends_on은 실행 순서만 컨트롤 할 뿐,
+    # 컨테이너 안의 서비스가 실행 가능한 상태인지 확인하지 않는다.
+    # DB 또는 Redis가 아직 실행가능한 상태가 아니어서 어플리케이션 실행에 실패하는 경우 재시작 하도록 설정한 것.

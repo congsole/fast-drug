@@ -67,7 +67,7 @@ spring:
 pharmacy:
   recommendation:
     base:
-      url: http://13.209.220.61/dir/ #TODO aws ec2를 생성하여 ip를 할당받은 후 변경 예정
+      url: http://13.209.220.61/dir/ #TO.DO aws ec2를 생성하여 ip를 할당받은 후 변경 예정
 
 
 

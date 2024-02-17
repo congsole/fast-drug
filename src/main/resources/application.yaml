@@ -53,7 +53,7 @@ spring:
       on-profile: prod
   datasource:
     driver-class-name: org.mariadb.jdbc.Driver
-    url: jdbc:mariadb://pharmacy-recommendation-database:4000/pharmacy-recommendation
+    url: jdbc:mariadb://pharmacy-recommendation-database:3308/pharmacy-recommendation
     username: ${SPRING_DATASOURCE_USERNAME}
     password: ${SPRING_DATASOURCE_PASSWORD}
   redis:
